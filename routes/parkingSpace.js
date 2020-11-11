@@ -3,13 +3,18 @@ const admin = require("../middleware/admin");
 const _ = require("lodash");
 const { ParkingSpace, validate } = require("../models/parkingSpace");
 const { ParkingZone } = require("../models/parkingZone");
+const { VehicalParking } = require("../models/vehicleParking");
+const {addRegis}=require("../util/parkingUtil");
 const express = require("express");
 const router = express.Router();
 const ObjectId = require('mongoose').Types.ObjectId;
 
 router.get("/", auth, async (req, res) => {
-  const zones = await ParkingSpace.find();
-  res.send(zones);
+  const  parkingZoneId= req.header("parkingZoneId");
+  const vehicalDetails = await VehicalParking.find();
+  const parkingSpaces = await ParkingSpace.find({});
+  const newParkingSpaces=addRegis(vehicalDetails,parkingSpaces,parkingZoneId); 
+  res.send(newParkingSpaces);
 });
 router.post("/", [auth,admin], async (req, res) => {
   const { error } = validate(req.body);

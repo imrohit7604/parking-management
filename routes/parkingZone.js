@@ -2,11 +2,13 @@ const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
 const _ = require("lodash");
 const { ParkingZone, validate } = require("../models/parkingZone");
+
+
 const express = require("express");
 const router = express.Router();
 
 router.get("/", auth, async (req, res) => {
-  const zones = await ParkingZone.find();
+  const zones = await ParkingZone.find();  
   res.send(zones);
 });
 router.post("/", [auth,admin], async (req, res) => {

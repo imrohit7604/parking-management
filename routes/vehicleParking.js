@@ -7,10 +7,18 @@ const { ParkingZone } = require("../models/parkingZone");
 const express = require("express");
 const router = express.Router();
 const ObjectId = require('mongoose').Types.ObjectId;
+const {calaculateParkingDetails}=require("../util/parkingUtil")
 
 router.get("/", auth, async (req, res) => {
-  const zones = await VehicalParking.find();
-  res.send(zones);
+  const parkings = await VehicalParking.find();
+  res.send(parkings);
+});
+router.get("/parkingDetails", auth, async (req, res) => {
+  const parkings = await VehicalParking.find();
+  const zones=await ParkingZone.find();
+  const spaces=await ParkingSpace.find();
+  const result=calaculateParkingDetails(parkings,spaces,zones);
+  res.send(result);
 });
 router.post("/", [auth,admin], async (req, res) => {
   const { error } = validate(req.body);
@@ -21,8 +29,7 @@ router.post("/", [auth,admin], async (req, res) => {
  
     const parking_zone= await ParkingZone.findOne({ _id: new ObjectId(req.body.parkingZoneId) });
     const parking_space= await ParkingSpace.findOne({ _id: new ObjectId(req.body.parkingSpaceId) });
-   console.log("parking_zone",parking_zone);
-   console.log("parking_space",parking_space);
+   
 
     if(!(parking_zone&&parking_space))
     return res.status(400).json({ error: "Bad Request" });
@@ -31,8 +38,16 @@ router.post("/", [auth,admin], async (req, res) => {
     if(vehicleId)
     return res.status(400).json({ error: "Given Space is already consumed." });
 
-  let vehicle_parking= await VehicalParking.findOne({ registrationNumber: req.body.registrationNumber });
-  if (vehicle_parking!=null&&vehicle_parking.releaseDateTime==null) return res.status(400).json({ error: "Vehicle  is already present." });
+  let vehicle_parking= await VehicalParking.find({ registrationNumber: req.body.registrationNumber });
+  console.log("vehicle_parking",vehicle_parking);
+  let flag=false;
+  vehicle_parking.forEach(vehicle => {
+    if (vehicle.releaseDateTime==null) 
+    flag=true;
+  });
+  if(flag===true)
+  return res.status(400).json({ error: "Vehicle  is already present." });
+  
 
   vehicle_parking = new VehicalParking({parkingZoneId:req.body.parkingZoneId,
                                         parkingSpaceId:req.body.parkingSpaceId,
