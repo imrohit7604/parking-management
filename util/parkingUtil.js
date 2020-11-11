@@ -50,8 +50,7 @@ function sortByAsec(state) {
     const vehicalDetailsMap=new Map();
     const parkingSpacesMap=new Map();
     vehicalDetails.forEach(detail=>{
-        if(detail.releaseDateTime!=null)
-        {
+        
             if(!vehicalDetailsMap.has(detail.parkingSpaceId))
                 vehicalDetailsMap.set(detail.parkingSpaceId,1);
             else
@@ -60,7 +59,7 @@ function sortByAsec(state) {
                count++;
                vehicalDetailsMap.set(detail.parkingSpaceId,count);
             }
-        }
+        
     });
     parkingSpaces.forEach(space=>{
         const spaceId=space._id.toString();
@@ -84,6 +83,7 @@ function sortByAsec(state) {
         {
             let value=parkingSpacesMap.get(zoneId);
             value=sortByAsec(value);
+           
             result.push({title:zone.parkingZoneTitle,value});
         }
     })
@@ -92,5 +92,20 @@ function sortByAsec(state) {
     return result;
  }
 
+ function resetData(spaces) {
+const vehicleIds=[];
+const newSpace=[];
+   spaces.forEach(space=>{
+       const{vehicleId}=space.parkingSpaceTitle;
+       if(vehicleId)
+       {
+        vehicleIds.push(vehicleId);
+        newSpace.push(space);
+       }
+   });
+   return {vehicleIds,newSpace};    
+    
+}
  module.exports.calaculateParkingDetails = calaculateParkingDetails;
   module.exports.addRegis = addRegis;
+  module.exports.resetData = resetData;

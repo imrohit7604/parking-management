@@ -7,7 +7,7 @@ const { ParkingZone } = require("../models/parkingZone");
 const express = require("express");
 const router = express.Router();
 const ObjectId = require('mongoose').Types.ObjectId;
-const {calaculateParkingDetails}=require("../util/parkingUtil")
+const {calaculateParkingDetails,resetData}=require("../util/parkingUtil")
 
 router.get("/", auth, async (req, res) => {
   const parkings = await VehicalParking.find();
@@ -19,6 +19,22 @@ router.get("/parkingDetails", auth, async (req, res) => {
   const spaces=await ParkingSpace.find();
   const result=calaculateParkingDetails(parkings,spaces,zones);
   res.send(result);
+});
+
+router.post("/reset", [auth,admin], async (req, res) => {
+  const spaces=await ParkingSpace.find();
+ const {vehicleIds,newSpace}= resetData(spaces);
+vehicleIds.forEach(async({_id})=>{
+  await VehicalParking.findByIdAndUpdate(_id,{
+    releaseDateTime:new Date()});
+});
+newSpace.forEach(async(parking_space)=>{
+  await ParkingSpace.findByIdAndUpdate(parking_space._id,{
+    parkingSpaceTitle:{...parking_space.parkingSpaceTitle,vehicleId:null}
+  })
+});
+
+  res.json({ message: "Saved Successfully !!" });
 });
 router.post("/", [auth,admin], async (req, res) => {
   const { error } = validate(req.body);
@@ -39,7 +55,7 @@ router.post("/", [auth,admin], async (req, res) => {
     return res.status(400).json({ error: "Given Space is already consumed." });
 
   let vehicle_parking= await VehicalParking.find({ registrationNumber: req.body.registrationNumber });
-  console.log("vehicle_parking",vehicle_parking);
+  
   let flag=false;
   vehicle_parking.forEach(vehicle => {
     if (vehicle.releaseDateTime==null) 
