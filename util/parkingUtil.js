@@ -58,7 +58,6 @@ function sortByAsec(state) {
         bookingDateTime.getMonth()  === date.month &&
         bookingDateTime.getFullYear() === date.year)
         {
-            console.log("bookingDateTime",bookingDateTime);
             
             if(!vehicalDetailsMap.has(detail.parkingSpaceId))
                 vehicalDetailsMap.set(detail.parkingSpaceId,1);
@@ -70,11 +69,16 @@ function sortByAsec(state) {
             }
         }
     });
+    const currentDate=new Date();
+    
     parkingSpaces.forEach(space=>{
         const spaceId=space._id.toString();
         const values={noOfBookings:0,vehicleParked:0};
         values.noOfBookings=vehicalDetailsMap.get(spaceId);
+            if(currentDate.getDate()===date.day&&currentDate.getMonth()===date.month&&currentDate.getFullYear()===date.year)
         values.vehicleParked=space.parkingSpaceTitle.vehicleId?1:0;
+        else
+        values.vehicleParked=0;
         const spaceValues={title:space.parkingSpaceTitle.title,
                             value:values};
         if(!parkingSpacesMap.has(space.parkingZoneId))

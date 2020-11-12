@@ -8,7 +8,7 @@ require("./startup/routes")(app);
 require("./startup/db")();
 require("./startup/config")();
 require("./startup/validation")();
-var cron = require("node-cron");
+
 
 const port =  3002;
 app.listen(port, () => console.info(`Listening on port ${port}...`));

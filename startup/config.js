@@ -4,5 +4,8 @@ module.exports = function () {
     console.log("FATAL ERROR: jwtPrivateKey is not defined.")
     throw new Error("FATAL ERROR: jwtPrivateKey is not defined.");
   }
-  
+  if (!process.env.mongoDB) {
+    console.log("FATAL ERROR: mongoDB is not defined.")
+    throw new Error("FATAL ERROR: mongoDB is not defined.");
+  }
 };
