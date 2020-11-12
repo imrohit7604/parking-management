@@ -45,12 +45,21 @@ function sortByAsec(state) {
     });
     return newParkingSpace;
   }
-  function calaculateParkingDetails(vehicalDetails, parkingSpaces,zones) {
+  function calaculateParkingDetails(vehicalDetails, parkingSpaces,zones,date) {
     let result=[];
+    
     const vehicalDetailsMap=new Map();
     const parkingSpacesMap=new Map();
     vehicalDetails.forEach(detail=>{
+
+        const {bookingDateTime}=detail;
         
+        if(bookingDateTime.getDate() === date.day &&
+        bookingDateTime.getMonth()  === date.month &&
+        bookingDateTime.getFullYear() === date.year)
+        {
+            console.log("bookingDateTime",bookingDateTime);
+            
             if(!vehicalDetailsMap.has(detail.parkingSpaceId))
                 vehicalDetailsMap.set(detail.parkingSpaceId,1);
             else
@@ -59,7 +68,7 @@ function sortByAsec(state) {
                count++;
                vehicalDetailsMap.set(detail.parkingSpaceId,count);
             }
-        
+        }
     });
     parkingSpaces.forEach(space=>{
         const spaceId=space._id.toString();

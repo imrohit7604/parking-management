@@ -13,11 +13,16 @@ router.get("/", auth, async (req, res) => {
   const parkings = await VehicalParking.find();
   res.send(parkings);
 });
-router.get("/parkingDetails", auth, async (req, res) => {
+router.post("/parkingDetails", auth, async (req, res) => {
+  const {date} =req.body;
+  
+  
+  if(date==null)  return res.status(400).json({ error: "Bad Request" });
+
   const parkings = await VehicalParking.find();
   const zones=await ParkingZone.find();
   const spaces=await ParkingSpace.find();
-  const result=calaculateParkingDetails(parkings,spaces,zones);
+  const result=calaculateParkingDetails(parkings,spaces,zones,date);
   res.send(result);
 });
 
