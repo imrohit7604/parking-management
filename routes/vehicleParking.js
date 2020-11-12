@@ -21,7 +21,7 @@ router.get("/parkingDetails", auth, async (req, res) => {
   res.send(result);
 });
 
-router.post("/reset", [auth,admin], async (req, res) => {
+router.get("/reset", [auth,admin], async (req, res) => {
   const spaces=await ParkingSpace.find();
  const {vehicleIds,newSpace}= resetData(spaces);
 vehicleIds.forEach(async({_id})=>{

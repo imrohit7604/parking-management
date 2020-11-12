@@ -6,7 +6,7 @@ module.exports = function () {
   mongoose.set("useNewUrlParser", true);
 
   mongoose
-    .connect("mongodb+srv://Rohit123:Rohit123@cluster0.oxzda.mongodb.net/rohit?retryWrites=true&w=majority", {
+    .connect(process.env.mongoDB, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
