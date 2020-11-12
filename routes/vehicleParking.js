@@ -9,23 +9,13 @@ const router = express.Router();
 const ObjectId = require('mongoose').Types.ObjectId;
 const {calaculateParkingDetails,resetData}=require("../util/parkingUtil")
 
+//End Point for get all vehicals details
 router.get("/", auth, async (req, res) => {
   const parkings = await VehicalParking.find();
   res.send(parkings);
 });
-router.post("/parkingDetails", auth, async (req, res) => {
-  const {date} =req.body;
-  
-  
-  if(date==null)  return res.status(400).json({ error: "Bad Request" });
 
-  const parkings = await VehicalParking.find();
-  const zones=await ParkingZone.find();
-  const spaces=await ParkingSpace.find();
-  const result=calaculateParkingDetails(parkings,spaces,zones,date);
-  res.send(result);
-});
-
+//End Point for release all vehicle and zone spaces
 router.get("/reset", [auth,admin], async (req, res) => {
   const spaces=await ParkingSpace.find();
  const {vehicleIds,newSpace}= resetData(spaces);
@@ -38,9 +28,10 @@ newSpace.forEach(async(parking_space)=>{
     parkingSpaceTitle:{...parking_space.parkingSpaceTitle,vehicleId:null}
   })
 });
-
   res.json({ message: "Saved Successfully !!" });
 });
+
+//End Point for book space but only counter agent can book
 router.post("/", [auth,admin], async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
@@ -83,6 +74,7 @@ router.post("/", [auth,admin], async (req, res) => {
   res.json({ message: "Saved Successfully !!" });
 });
 
+//End Point for release space but only counter agent can book
 router.put("/", [auth,admin], async (req, res) => {
 
   const { vehicle_Id } = req.body
@@ -111,5 +103,18 @@ router.put("/", [auth,admin], async (req, res) => {
 
   res.json({ message: "Updated Successfully !!" });
 });
+
+//End point for  zone spaces details
+router.post("/parkingDetails", auth, async (req, res) => {
+  const {date} =req.body;
+  if(date==null)  return res.status(400).json({ error: "Bad Request" });
+
+  const parkings = await VehicalParking.find();
+  const zones=await ParkingZone.find();
+  const spaces=await ParkingSpace.find();
+  const result=calaculateParkingDetails(parkings,spaces,zones,date);
+  res.send(result);
+});
+
 
 module.exports = router;

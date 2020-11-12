@@ -1,4 +1,6 @@
 require("dotenv").config();
+
+//Check private is defined 
 module.exports = function () {
   if (!process.env.parking_jwtPrivateKey) {
     console.log("FATAL ERROR: jwtPrivateKey is not defined.")

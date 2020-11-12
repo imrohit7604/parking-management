@@ -5,14 +5,13 @@ const { User, validate } = require("../models/user");
 const express = require("express");
 const router = express.Router();
 
+//End Point for get user details
 router.get("/me", auth, async (req, res) => {
   const user = await User.findById(req.user._id).select("-password");
   res.send(user);
 });
 
-
-
-
+//End Point for Sign up/create a new user
 router.post("/", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
@@ -24,7 +23,6 @@ router.post("/", async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
   await user.save();
-  //sendMail(user.email, user.name);
   res.json({ message: "Successfully Registered!!" });
 });
 

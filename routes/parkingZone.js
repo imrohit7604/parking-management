@@ -2,15 +2,16 @@ const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
 const _ = require("lodash");
 const { ParkingZone, validate } = require("../models/parkingZone");
-
-
 const express = require("express");
 const router = express.Router();
 
+//End Point for getting all zones
 router.get("/", auth, async (req, res) => {
   const zones = await ParkingZone.find();  
   res.send(zones);
 });
+
+//End Point for add new zone
 router.post("/", [auth,admin], async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });

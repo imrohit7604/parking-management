@@ -3,9 +3,7 @@ const mongoose = require("mongoose");
 
 require("dotenv").config();
 module.exports = function () {
-  mongoose.set("useNewUrlParser", true);
-
-  mongoose
+    mongoose
     .connect(process.env.mongoDB, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
