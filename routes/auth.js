@@ -21,7 +21,19 @@ router.post("/", async (req, res) => {
   const token = user.generateAuthToken();
   res.json({ message: "Login Successfully", token: token });
 });
+router.post("/checkMail", async (req, res) => {
+  const { email } = req.body
+  if (!email) return res.status(400).json({error:"Email id is not present in given request"});
 
+  let user = await User.findOne({ email });
+  if (!user)
+    return res.status(200).json({ found:false });
+    else
+    return res.status(200).json({ found:true });
+
+
+
+});
 function validate(req) {
   const schema = {
     email: Joi.string().min(5).max(255).required().email(),
